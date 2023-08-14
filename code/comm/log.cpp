@@ -32,7 +32,6 @@ namespace lutrpc
     void Logger::pushLog(const lutrpc::LogEvent &logEvt)
     {
         ScopeMutext<Mutex> lock(m_mutex);
-        sleep(1);
         m_log_evnet_queue.push(logEvt);
     }
 
