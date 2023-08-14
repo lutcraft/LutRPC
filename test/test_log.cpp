@@ -7,8 +7,8 @@ void* fun(void*) {
   
   int i = 20;
   while (i--) {
-    DEBUGLOG("debug this is thread in %s", "fun");
-    INFOLOG("info this is thread in %s", "fun");
+    DEBUGLOG("debug this is thread in %s - %d", "fun", i);
+    INFOLOG("info this is thread in %s - %d", "fun", i);
   }
 
   return NULL;
@@ -20,14 +20,16 @@ int main() {
 
 
   pthread_t thread;
+  //启动辅线程，测试日志打印
   pthread_create(&thread, NULL, &fun, NULL);
 
   int i = 20;
+  //主线程中，测试日志打印
   while (i--) {
-    DEBUGLOG("test debug log %s", "11");
-    INFOLOG("test info log %s", "11");
+    DEBUGLOG("test debug log %s - %d", "main", i);
+    INFOLOG("test info log %s- %d", "main", i);
   }
-
+  //主线程等待辅线程返回，再结束，防止辅线程被误杀
   pthread_join(thread, NULL);
   return 0;
 }

@@ -29,6 +29,31 @@ namespace lutrpc
         g_logger = new Logger(global_log_level);
     }
 
+    void Logger::pushLog(const lutrpc::LogEvent &logEvt)
+    {
+        ScopeMutext<Mutex> lock(m_mutex);
+        sleep(1);
+        m_log_evnet_queue.push(logEvt);
+    }
+
+    void Logger::log()
+    {
+        //尽快换出临界区数据，防止锁冲突
+        ScopeMutext<Mutex> lock(m_mutex);
+            std::queue<LogEvent> tmp;
+            m_log_evnet_queue.swap(tmp);
+
+        while (!tmp.empty()) {
+            LogEvent logEvt = tmp.front();
+            printf(logEvt.toString().c_str());
+            tmp.pop();
+        }
+    }
+
+
+
+
+
     std::string LogEvent::toString()
     {
         struct timeval now_time;
@@ -48,7 +73,10 @@ namespace lutrpc
 
         ss << "[" << LogLevelToString(m_level) << "]\t"
            << "[" << time_str << "]\t"
-           << "[" << m_pid << ":" << m_thread_id << "]\t";
+           << "[" << m_pid << ":" << m_thread_id << "]\t"
+           << "[" << m_file_name << ":" << m_file_line << "]\t"
+           << m_log_msg << "\n"
+           ;
 
         return ss.str();
     }
@@ -90,19 +118,5 @@ namespace lutrpc
         }
     }
 
-    template <typename... Args>
-    std::string formatString(const char *str, Args &&...args)
-    {
 
-        int size = snprintf(nullptr, 0, str, args...);
-
-        std::string result;
-        if (size > 0)
-        {
-            result.resize(size);
-            snprintf(&result[0], size + 1, str, args...);
-        }
-
-        return result;
-    }
 }
