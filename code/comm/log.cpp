@@ -4,6 +4,7 @@
 #include <time.h> //c库的time
 #include <sys/time.h>
 #include "code/comm/log.h"
+#include "code/comm/config.h"
 
 namespace lutrpc
 {
@@ -24,7 +25,7 @@ namespace lutrpc
     void Logger::InitGlobalLogger()
     {
 
-        LogLevel global_log_level = lutrpc::Info;
+        LogLevel global_log_level = StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
         printf("Init log level [%s]\n", LogLevelToString(global_log_level).c_str());
         g_logger = new Logger(global_log_level);
     }
@@ -84,13 +85,13 @@ namespace lutrpc
     {
         switch (level)
         {
-        case Debug:
+        case DEBUG:
             return "DEBUG";
 
-        case Info:
+        case INFO:
             return "INFO";
 
-        case Error:
+        case ERROR:
             return "ERROR";
         default:
             return "UNKNOWN";
@@ -101,19 +102,19 @@ namespace lutrpc
     {
         if (log_level == "DEBUG")
         {
-            return Debug;
+            return DEBUG;
         }
         else if (log_level == "INFO")
         {
-            return Info;
+            return INFO;
         }
         else if (log_level == "ERROR")
         {
-            return Error;
+            return ERROR;
         }
         else
         {
-            return Unknown;
+            return UNKNOWN;
         }
     }
 

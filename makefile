@@ -2,6 +2,7 @@ PATH_BIN = bin
 PATH_LIB = lib
 PATH_OBJ = obj
 
+PATH_3RD = 3rd
 PATH_CODE = code
 PATH_COMM = $(PATH_CODE)/comm
 PATH_SERVER = $(PATH_CODE)/server
@@ -25,7 +26,7 @@ CXX := g++
 
 CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable
 
-CXXFLAGS += -I./ -I$(PATH_CODE)	-I$(PATH_COMM) -I$(PATH_SERVER)
+CXXFLAGS += -I./ -I$(PATH_3RD) -I$(PATH_CODE)	-I$(PATH_COMM) -I$(PATH_SERVER)
 
 # LIBS += /usr/lib/libprotobuf.a	/usr/lib/libtinyxml.a
 
@@ -33,11 +34,15 @@ CXXFLAGS += -I./ -I$(PATH_CODE)	-I$(PATH_COMM) -I$(PATH_SERVER)
 COMM_OBJ := $(patsubst $(PATH_COMM)/%.cpp, $(PATH_OBJ)/%.o, $(wildcard $(PATH_COMM)/*.cpp))
 SERVER_OBJ := $(patsubst $(PATH_SERVER)/%.cpp, $(PATH_OBJ)/%.o, $(wildcard $(PATH_SERVER)/*.cpp))
 
-ALL_TESTS : $(PATH_BIN)/test_log 
+ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_config
 
-TEST_CASE_OUT := $(PATH_BIN)/test_log
+TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_config
 
 LIB_OUT := $(PATH_LIB)/liblutrpc.a
+
+$(PATH_BIN)/test_config: $(LIB_OUT)
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_config.cpp -o $@ $(LIB_OUT) $(LIBS) -ldl
+
 
 $(PATH_BIN)/test_log: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_log.cpp -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread

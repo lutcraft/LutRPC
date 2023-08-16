@@ -27,35 +27,35 @@ namespace lutrpc
     }
 
 #define DEBUGLOG(str, ...)                                                                                                                                                                                  \
-    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::Debug)                                                                                                                                  \
+    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::DEBUG)                                                                                                                                  \
     {                                                                                                                                                                                                       \
-        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::Debug); \
+        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::DEBUG); \
         lutrpc::Logger::GetGlobalLogger()->pushLog(tmpEvent);                                                                                                                                             \
         lutrpc::Logger::GetGlobalLogger()->log();                                                                                                                                                           \
     }
 
 #define INFOLOG(str, ...)                                                                                                                                                                                   \
-    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::Info)                                                                                                                                   \
+    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::INFO)                                                                                                                                   \
     {                                                                                                                                                                                                       \
-        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::Debug); \
+        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::INFO); \
         lutrpc::Logger::GetGlobalLogger()->pushLog(tmpEvent);                                                                                                                                             \
         lutrpc::Logger::GetGlobalLogger()->log();                                                                                                                                                           \
     }
 
 #define ERRORLOG(str, ...)                                                                                                                                                                                  \
-    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::Error)                                                                                                                                  \
+    if (lutrpc::Logger::GetGlobalLogger()->getLogLevel() <= lutrpc::ERROR)                                                                                                                                  \
     {                                                                                                                                                                                                       \
-        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::Debug); \
+        lutrpc::LogEvent tmpEvent(lutrpc::lutGetPid(), lutrpc::lutGetThreadId(), std::string(__FILE__), __LINE__, lutrpc::formatString(str, ##__VA_ARGS__), lutrpc::LogLevel::ERROR); \
         lutrpc::Logger::GetGlobalLogger()->pushLog(tmpEvent);                                                                                                                                             \
         lutrpc::Logger::GetGlobalLogger()->log();                                                                                                                                                           \
     }
 
     enum LogLevel
     {
-        Unknown = 0,
-        Debug = 1,
-        Info = 2,
-        Error = 3
+        UNKNOWN = 0,
+        DEBUG = 1,
+        INFO = 2,
+        ERROR = 3
     };
 
     class LogEvent
