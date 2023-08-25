@@ -8,8 +8,8 @@ void *fun(void *)
   int i = 20;
   while (i--)
   {
-    DEBUGLOG("debug this is thread in %s - %d", "fun", i);
-    INFOLOG("info this is thread in %s - %d", "fun", i);
+    DEBUGLOG("debug this is thread in %s - %d", "fun\n", i);
+    INFOLOG("info this is thread in %s - %d", "fun\n", i);
   }
 
   return NULL;
@@ -28,8 +28,8 @@ int main()
   // 主线程中，测试日志打印
   while (i--)
   {
-    DEBUGLOG("test debug log %s - %d", "main", i);
-    INFOLOG("test info log %s- %d", "main", i);
+    DEBUGLOG("test debug log %s - %d\n", "main", i);
+    INFOLOG("test info log %s- %d\n", "main", i);
   }
   // 主线程等待辅线程返回，再结束，防止辅线程被误杀
   pthread_join(thread, NULL);

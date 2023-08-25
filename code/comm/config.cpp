@@ -27,7 +27,7 @@ namespace lutrpc
         }
         else
         {
-            ERRORLOG("config file %s not exist!", configFile);
+            ERRORLOG("config file %s not exist!\n", configFile);
             exit(1);
         }
         
