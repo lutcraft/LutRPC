@@ -21,6 +21,11 @@ namespace lutrpc
             m_mutex.unlock();
         }
 
+        void UnlockScopeMutext()
+        {
+            m_mutex.unlock();
+        }
+
     private:
         T &m_mutex;
     };
