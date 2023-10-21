@@ -1,7 +1,9 @@
 
+#include <sys/eventfd.h>
 #include "code/comm/util.h"
 #include "code/comm/log.h"
 #include "code/server/reactor.h"
+#include "code/server/fd_event_wkup.h"
 
 namespace lutrpc
 {
@@ -61,7 +63,7 @@ namespace lutrpc
                 addEpollCtl(event);
             });
             // 立刻唤醒（添加）
-            //  wakeUpReactor();
+            wakeUpReactor();
         }
         return 0;
     }
@@ -126,10 +128,34 @@ namespace lutrpc
                         ERRORLOG("fd_event = NULL, continue");
                         continue;
                     }
-                    INFOLOG("fd %d trigger %d event", fd_event->getFd(), fd_event->getEpollEvent().events)
+                    INFOLOG("fd %d trigger 0x%x event", fd_event->getFd(), fd_event->getEpollEvent().events)
                     addTask(fd_event->handler());
                 }
             }
         }
+    }
+
+    void Reactor::initWakeUp()
+    {
+        int wakeUpFd = eventfd(0, EFD_NONBLOCK);
+        if (wakeUpFd < 0)
+        {
+            ERRORLOG("failed to create event loop, eventfd create error, error info[%d]", errno);
+            exit(0);
+        }
+        m_wakeUpEvent = new WakeUpFdEvent(wakeUpFd);
+        m_wakeUpEvent->regCallBack([this]()
+                                   {
+                            char buf[8];
+                            while(read(m_wakeUpEvent->getFd(), buf, 8) != -1 && errno != EAGAIN) {
+                            }
+                            DEBUGLOG("read full bytes from wakeup fd[%d]", m_wakeUpEvent->getFd()); });
+        Reactor::addEvent(m_wakeUpEvent);
+    }
+
+    void Reactor::wakeUpReactor()
+    {
+        INFOLOG("WAKE UP");
+        m_wakeUpEvent->wakeup();
     }
 }

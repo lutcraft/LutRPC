@@ -2,6 +2,7 @@
 
 #include <set>
 #include "code/server/fd_event.h"
+#include "code/server/fd_event_wkup.h"
 
 namespace lutrpc
 {
@@ -19,6 +20,9 @@ namespace lutrpc
         // 向本reactor对象的epoll添加 在fd上的event事件监听，如果对应fd已经被epoll监听，则对event事件列表进行modify
         int addEpollCtl(FdEvent *event);
 
+
+        WakeUpFdEvent *m_wakeUpEvent{NULL};
+
     public:
         Reactor();
         ~Reactor();
@@ -30,6 +34,8 @@ namespace lutrpc
         int delEvent(FdEvent *event);
         bool InReactorThread();
         int addTask(std::function<void()> cb);
+        void initWakeUp();
+        void wakeUpReactor();       //向wakeup fd写入，使得epoll_wait可以返回
         void loop();
     };
 

@@ -13,7 +13,6 @@ namespace lutrpc
     class FdEvent
     {
     private:
-        int m_fd{-1};
         epoll_event m_event;
         std::function<void()> m_callback;       //本事件注册的读写回调，在epoll抓到这个event事件发生时，会调用这个回调
     public:
@@ -24,6 +23,8 @@ namespace lutrpc
         epoll_event getEpollEvent(){return this->m_event;};
         std::function<void()> handler();     //获取event回调的接口
         void regCallBack(std::function<void()> callback);//注册event回调的接口，回调参数通过lamda表达式传入参数，但这导致传入的回调函数必须为lamda表达式了
+    protected:
+        int m_fd{-1};
     };
     
 } // namespace lutrpc

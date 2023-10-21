@@ -14,6 +14,7 @@ int main(int argc, const char **argv)
 
     lutrpc::Reactor *reactor = new lutrpc::Reactor();
 
+    reactor->initWakeUp();
     int listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (listenfd == -1)
     {
