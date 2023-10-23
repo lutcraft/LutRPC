@@ -1,5 +1,8 @@
 
+#include <iostream>
+#include <string.h>
 #include <sys/eventfd.h>
+#include "code/comm/essential.h"
 #include "code/comm/util.h"
 #include "code/comm/log.h"
 #include "code/server/reactor.h"
@@ -47,7 +50,41 @@ namespace lutrpc
         }
         m_listen_fds.insert(event->getFd()); // 可以反复instert
         epoll_event epEvent = event->getEpollEvent();
-        return epoll_ctl(m_epoll_fd, op, event->getFd(), &epEvent);
+        int ret = epoll_ctl(m_epoll_fd, op, event->getFd(), &epEvent);
+        if (ret == LUT_FAIL)
+        {
+            ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno)); 
+        }
+        else
+        {
+            DEBUGLOG("add event success, fd[%d]", event->getFd());
+        }
+        
+        return ret;
+    }
+
+    int Reactor::delEpollCtl(FdEvent *event)
+    {
+        // 获取迭代器对象
+        auto it = m_listen_fds.find(event->getFd());
+        int op = EPOLL_CTL_DEL;
+        if (it == m_listen_fds.end()) // 要删除的本就不存在
+        {
+            return LUT_OK;
+        }
+        m_listen_fds.erase(event->getFd()); // 删除set元素
+        epoll_event epEvent = event->getEpollEvent();
+        DEBUGLOG("del event success, fd[%d]", event->getFd());
+        int ret = epoll_ctl(m_epoll_fd, op, event->getFd(), &epEvent);
+        if (ret == LUT_FAIL)
+        {
+            ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno)); 
+        }
+        else
+        {
+            DEBUGLOG("add event success, fd[%d]", event->getFd());
+        }
+        return ret;
     }
 
     int Reactor::addEvent(FdEvent *event)
@@ -65,17 +102,35 @@ namespace lutrpc
             // 立刻唤醒（添加）
             wakeUpReactor();
         }
-        return 0;
+        return LUT_OK;
     }
 
     int Reactor::delEvent(FdEvent *event)
     {
         if (InReactorThread())
         {
-            /* code */
+            delEpollCtl(event);
         }
-        return 0;
+        else
+        {
+            addTask([this, event]() { // 参数通过lamda表达式的捕获传递
+                delEpollCtl(event);
+            });
+            // 立刻唤醒（添加）
+            wakeUpReactor();
+        }
+        return LUT_OK;
     }
+
+    void Reactor::showListeningFds()
+    {
+        INFOLOG("Listening fd num = %d", m_listen_fds.size());
+        for (auto it = m_listen_fds.begin(); it != m_listen_fds.end(); ++it) {
+            INFOLOG("%d ", *it);
+        }
+        return;
+    }
+
 
     bool Reactor::InReactorThread()
     {
@@ -86,7 +141,7 @@ namespace lutrpc
     {
         ScopeMutext<Mutex> lock(m_mutex);
         m_pending_tasks.push(cb);
-        return 0;
+        return LUT_OK;
     }
 
     /**
@@ -138,6 +193,7 @@ namespace lutrpc
     void Reactor::initWakeUp()
     {
         int wakeUpFd = eventfd(0, EFD_NONBLOCK);
+        ERRORLOG("Wake up fd[%d]", wakeUpFd);
         if (wakeUpFd < 0)
         {
             ERRORLOG("failed to create event loop, eventfd create error, error info[%d]", errno);

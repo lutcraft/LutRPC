@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "code/comm/essential.h"
 #include "code/comm/log.h"
 #include "code/comm/config.h"
 #include "code/server/reactor.h"
@@ -16,6 +17,7 @@ int main(int argc, const char **argv)
 
     reactor->initWakeUp();
     int listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    ERRORLOG("listenfd = %d", listenfd);
     if (listenfd == -1)
     {
         ERRORLOG("listenfd = -1");
@@ -56,7 +58,10 @@ int main(int argc, const char **argv)
                 return; 
             });
     reactor->addEvent(event);
-    std::cout << "Hello!" << reactor->GetEpollFd() << std::endl;
+    reactor->delEvent(event);
+    std::cout << "Epoll fdid:" << reactor->GetEpollFd() << std::endl;
+    reactor->showListeningFds();
+
     reactor->loop();
-    return 0;
+    return LUT_OK;
 }

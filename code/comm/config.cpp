@@ -1,4 +1,5 @@
 #include <fstream>
+#include "code/comm/essential.h"
 #include "code/comm/config.h"
 #include "code/comm/log.h"
 
@@ -41,7 +42,7 @@ namespace lutrpc
     {
         data.at("LogLevel").get_to(this->m_log_level);
         // m_log_level = data[LogLevel];
-        return 0;
+        return LUT_OK;
     }
 
 }

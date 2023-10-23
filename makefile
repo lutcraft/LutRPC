@@ -36,7 +36,7 @@ SERVER_OBJ := $(patsubst $(PATH_SERVER)/%.cpp, $(PATH_OBJ)/%.o, $(wildcard $(PAT
 
 ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor
 
-TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_config
+TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor
 
 LIB_OUT := $(PATH_LIB)/liblutrpc.a
 
@@ -70,7 +70,7 @@ PRINT-% : ; @echo $* = $($*)
 
 # to clean 
 clean :
-	rm -f $(COMM_OBJ) $(NET_OBJ) $(TESTCASES) $(TEST_CASE_OUT) $(PATH_LIB)/liblutrpc.a $(PATH_OBJ)/liblutrpc.a
+	rm -f $(COMM_OBJ) $(NET_OBJ) $(TEST_CASE_OUT) $(PATH_LIB)/liblutrpc.a $(PATH_OBJ)/liblutrpc.a
 
 # install
 install:

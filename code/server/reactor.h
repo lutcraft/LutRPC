@@ -19,6 +19,7 @@ namespace lutrpc
         std::queue<std::function<void()>> m_pending_tasks; // 本reactor对象在循环中需要执行的任务
         // 向本reactor对象的epoll添加 在fd上的event事件监听，如果对应fd已经被epoll监听，则对event事件列表进行modify
         int addEpollCtl(FdEvent *event);
+        int delEpollCtl(FdEvent *event);
 
 
         WakeUpFdEvent *m_wakeUpEvent{NULL};
@@ -32,6 +33,9 @@ namespace lutrpc
         int addEvent(FdEvent *event);
         // 向epool句柄删除Event，内部封装epoll_ctl
         int delEvent(FdEvent *event);
+
+        void showListeningFds();
+
         bool InReactorThread();
         int addTask(std::function<void()> cb);
         void initWakeUp();

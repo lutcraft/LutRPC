@@ -19,7 +19,7 @@ namespace lutrpc
         FdEvent(int fd){this->m_fd = fd;};
         ~FdEvent();
         int getFd(){return this->m_fd;};
-        int setEpollEvent(uint32_t event){ this->m_event.events |= event; return 0;};
+        int setEpollEvent(uint32_t event){ this->m_event.events |= event; return LUT_OK;};
         epoll_event getEpollEvent(){return this->m_event;};
         std::function<void()> handler();     //获取event回调的接口
         void regCallBack(std::function<void()> callback);//注册event回调的接口，回调参数通过lamda表达式传入参数，但这导致传入的回调函数必须为lamda表达式了

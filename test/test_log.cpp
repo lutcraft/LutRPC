@@ -1,5 +1,6 @@
 
 #include <pthread.h>
+#include "code/comm/essential.h"
 #include "code/comm/log.h"
 
 void *fun(void *)
@@ -33,5 +34,5 @@ int main()
   }
   // 主线程等待辅线程返回，再结束，防止辅线程被误杀
   pthread_join(thread, NULL);
-  return 0;
+  return LUT_OK;
 }
