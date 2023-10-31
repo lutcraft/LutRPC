@@ -70,7 +70,7 @@ PRINT-% : ; @echo $* = $($*)
 
 # to clean 
 clean :
-	rm -f $(COMM_OBJ) $(NET_OBJ) $(TEST_CASE_OUT) $(PATH_LIB)/liblutrpc.a $(PATH_OBJ)/liblutrpc.a
+	rm -f $(COMM_OBJ) $(SERVER_OBJ) $(NET_OBJ) $(TEST_CASE_OUT) $(PATH_LIB)/liblutrpc.a $(PATH_OBJ)/liblutrpc.a
 
 # install
 install:

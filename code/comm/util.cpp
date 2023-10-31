@@ -1,3 +1,4 @@
+#include <sys/time.h>
 #include <sys/syscall.h>
 
 #include "code/comm/util.h"
@@ -30,4 +31,11 @@ namespace lutrpc
         return syscall(SYS_gettid); // c标准库 -lc
     }
 
+    int64_t getNowMs()
+    {
+        timeval val;
+        gettimeofday(&val, NULL);
+
+        return val.tv_sec * 1000 + val.tv_usec / 1000;
+    }
 }

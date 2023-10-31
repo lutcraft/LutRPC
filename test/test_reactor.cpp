@@ -15,7 +15,7 @@ int main(int argc, const char **argv)
 
     lutrpc::Reactor *reactor = new lutrpc::Reactor();
 
-    reactor->initWakeUp();
+
     int listenfd = socket(AF_INET, SOCK_STREAM, 0);
     ERRORLOG("listenfd = %d", listenfd);
     if (listenfd == -1)
@@ -60,6 +60,14 @@ int main(int argc, const char **argv)
     reactor->addEvent(event);
     reactor->delEvent(event);
     std::cout << "Epoll fdid:" << reactor->GetEpollFd() << std::endl;
+
+    int i = 0;
+    lutrpc::Timer::TIMER_SMT_P pTimer = std::make_shared<lutrpc::Timer>(1000 ,true, [&i]()
+    {
+        INFOLOG("timer callbacking!%d", i++);
+    });
+
+    reactor->addTimer(pTimer);
     reactor->showListeningFds();
 
     reactor->loop();

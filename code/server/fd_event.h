@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <sys/epoll.h>
+#include "code/comm/essential.h"
 namespace lutrpc
 {
     /**
@@ -16,7 +17,8 @@ namespace lutrpc
         epoll_event m_event;
         std::function<void()> m_callback;       //本事件注册的读写回调，在epoll抓到这个event事件发生时，会调用这个回调
     public:
-        FdEvent(int fd){this->m_fd = fd;};
+        FdEvent(int fd);
+        FdEvent();
         ~FdEvent();
         int getFd(){return this->m_fd;};
         int setEpollEvent(uint32_t event){ this->m_event.events |= event; return LUT_OK;};

@@ -33,6 +33,8 @@ namespace lutrpc
         }
         INFOLOG("succ create event loop in thread %d\n", lutGetThreadId());
         t_reactor = this;
+        this->initWakeUp();
+        this->initTimer();
     }
     Reactor::~Reactor()
     {
@@ -53,13 +55,14 @@ namespace lutrpc
         int ret = epoll_ctl(m_epoll_fd, op, event->getFd(), &epEvent);
         if (ret == LUT_FAIL)
         {
-            ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno)); 
+            ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno));
+            ERRORLOG("op=%d,getFd=%u epEvent=%#x", op, event->getFd(), epEvent);
         }
         else
         {
             DEBUGLOG("add event success, fd[%d]", event->getFd());
         }
-        
+
         return ret;
     }
 
@@ -78,7 +81,7 @@ namespace lutrpc
         int ret = epoll_ctl(m_epoll_fd, op, event->getFd(), &epEvent);
         if (ret == LUT_FAIL)
         {
-            ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno)); 
+            ERRORLOG("failed epoll_ctl when del fd, errno=%d, error=%s", errno, strerror(errno));
         }
         else
         {
@@ -125,12 +128,12 @@ namespace lutrpc
     void Reactor::showListeningFds()
     {
         INFOLOG("Listening fd num = %d", m_listen_fds.size());
-        for (auto it = m_listen_fds.begin(); it != m_listen_fds.end(); ++it) {
+        for (auto it = m_listen_fds.begin(); it != m_listen_fds.end(); ++it)
+        {
             INFOLOG("%d ", *it);
         }
         return;
     }
-
 
     bool Reactor::InReactorThread()
     {
@@ -207,6 +210,17 @@ namespace lutrpc
                             }
                             DEBUGLOG("read full bytes from wakeup fd[%d]", m_wakeUpEvent->getFd()); });
         Reactor::addEvent(m_wakeUpEvent);
+    }
+
+    void Reactor::initTimer()
+    {
+        m_fd_timer = new TimerFdEvent();
+        addEvent(m_fd_timer);
+    }
+
+    void Reactor::addTimer(Timer::TIMER_SMT_P timer)
+    {
+        m_fd_timer->addTimerEvent(timer);
     }
 
     void Reactor::wakeUpReactor()
