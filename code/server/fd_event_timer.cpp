@@ -16,7 +16,7 @@ namespace lutrpc
         this->regCallBack([this]()
                           {
                              std::vector<Timer::TIMER_SMT_P> cb_vec;
-                             DEBUGLOG("timer:%d time up! Running CBs!");
+                             DEBUGLOG("timer:%u time up! Running CBs!", m_fd);
                              // 读取文件hd中的内容，防止定时器反复被触发
                              char buf[8];
                              while (1)

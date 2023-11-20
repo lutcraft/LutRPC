@@ -25,6 +25,7 @@ namespace lutrpc
         TimerFdEvent * m_fd_timer{NULL};
 
         WakeUpFdEvent *m_wakeUpEvent{NULL};
+        bool m_stop_flag {false};
     protected:
         int addTask(std::function<void()> cb);
     public:
@@ -46,6 +47,7 @@ namespace lutrpc
         void initTimer();
         void wakeUpReactor();       //向wakeup fd写入，使得epoll_wait可以返回
         void loop();
+        void stop();
     };
 
 } // namespace lutrpc

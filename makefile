@@ -34,12 +34,14 @@ CXXFLAGS += -I./ -I$(PATH_3RD) -I$(PATH_CODE)	-I$(PATH_COMM) -I$(PATH_SERVER)
 COMM_OBJ := $(patsubst $(PATH_COMM)/%.cpp, $(PATH_OBJ)/%.o, $(wildcard $(PATH_COMM)/*.cpp))
 SERVER_OBJ := $(patsubst $(PATH_SERVER)/%.cpp, $(PATH_OBJ)/%.o, $(wildcard $(PATH_SERVER)/*.cpp))
 
-ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor
+ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor $(PATH_BIN)/test_thread
 
-TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor
+TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_config $(PATH_BIN)/test_reactor $(PATH_BIN)/test_thread
 
 LIB_OUT := $(PATH_LIB)/liblutrpc.a
 
+$(PATH_BIN)/test_thread: $(LIB_OUT)
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_thread.cpp -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
 $(PATH_BIN)/test_reactor: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_reactor.cpp -o $@ $(LIB_OUT) $(LIBS) -ldl

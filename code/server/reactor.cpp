@@ -152,7 +152,7 @@ namespace lutrpc
      */
     void Reactor::loop()
     {
-        while (1)
+        while (!m_stop_flag)
         {
             ScopeMutext<Mutex> lock(m_mutex);
             std::queue<std::function<void()>> tmp_tasks;
@@ -191,6 +191,11 @@ namespace lutrpc
                 }
             }
         }
+    }
+
+    void Reactor::stop()
+    {
+        m_stop_flag = true;
     }
 
     void Reactor::initWakeUp()
